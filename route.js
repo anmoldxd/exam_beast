@@ -1,53 +1,48 @@
 export async function POST(req) {
-
-  try{
-
+  try {
     const { notes } = await req.json();
 
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json"
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          contents:[
+          contents: [
             {
-              parts:[
+              role: "user",
+              parts: [
                 {
-                  text:`
-Convert these study notes into:
-
-1. MCQs
-2. Short Questions
-3. Quick Revision Points
-
-Notes:
-${notes}
-                  `
-                }
-              ]
-            }
-          ]
-        })
+                  text: `Convert these notes into MCQs, short questions and revision points:\n\n${notes}`,
+                },
+              ],
+            },
+          ],
+        }),
       }
     );
 
     const data = await response.json();
 
+    console.log(data);
+
+    if (data.error) {
+      return Response.json({
+        quiz: "Gemini Error: " + data.error.message,
+      });
+    }
+
+    const text =
+      data.candidates?.[0]?.content?.parts?.[0]?.text;
+
     return Response.json({
-      quiz:
-        data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-        "No response from Gemini"
+      quiz: text || "No text generated",
     });
-
-  }catch(err){
-
+  } catch (err) {
     return Response.json({
-      error: err.message
-    }, { status:500 });
-
+      quiz: "Server Error: " + err.message,
+    });
   }
-
 }
