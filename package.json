@@ -1,0 +1,17 @@
+{
+  "name": "exam-beast",
+  "version": "1.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "framer-motion": "^11.3.19",
+    "lucide-react": "^0.468.0",
+    "next": "14.2.5",
+    "react": "^18",
+    "react-dom": "^18"
+  }
+}
